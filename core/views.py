@@ -1,12 +1,15 @@
 from typing import Any
+from django.db.models.base import Model as Model
+from django.db.models.query import QuerySet
 from django.forms import BaseModelForm
 from django.shortcuts import render ,redirect
 from django.http import HttpRequest, HttpResponse
-from django.views.generic.edit import CreateView
-from django.contrib.auth.models import User
+from django.views.generic.edit import CreateView ,UpdateView
+from .models import User
 from .forms import SignupForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate ,login ,logout
+from django.utils.decorators import method_decorator
 
 # Create your views here.
 
@@ -55,3 +58,13 @@ def logout_user(request):
 @login_required(login_url='login')
 def profile(request):
     return render(request, 'profile.html')
+
+@method_decorator(login_required(login_url='login'),name='dispatch')
+class AccountSettingsView(UpdateView):
+    model = User
+    fields = ['first_name','last_name', 'profile_pic', 'bio']
+    template_name = 'account_settings.html'
+    
+    
+    def get_object(self, queryset = None ) :
+        return self.request.user
