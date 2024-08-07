@@ -5,7 +5,8 @@ from django.forms import BaseModelForm
 from django.shortcuts import render ,redirect
 from django.http import HttpRequest, HttpResponse
 from django.views.generic.edit import CreateView ,UpdateView
-from .models import User
+from django.views.generic.list import ListView
+from .models import *
 from .forms import SignupForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate ,login ,logout
@@ -53,11 +54,15 @@ def login_page(request):
 def logout_user(request):
     logout(request)
     return redirect('login')        
+@method_decorator(login_required(login_url='login'),name='dispatch')
+class Profile(ListView):
+    model = Post
+    template_name = 'profile.html'
+    paginate_by = 5
+    
+    def get_queryset(self) :
+        return Post.objects.filter(user = self.request.user).order_by('-date_created')
 
-
-@login_required(login_url='login')
-def profile(request):
-    return render(request, 'profile.html')
 
 @method_decorator(login_required(login_url='login'),name='dispatch')
 class AccountSettingsView(UpdateView):
@@ -68,3 +73,17 @@ class AccountSettingsView(UpdateView):
     
     def get_object(self, queryset = None ) :
         return self.request.user
+    
+    
+@method_decorator(login_required(login_url='login'),name='dispatch')
+class CreatePost(CreateView):
+    model = Post
+    fields =['caption']
+    template_name = 'new_post.html'
+    success_url = '/profile/'
+    
+    
+    def form_valid(self, form):
+        user = self.request.user
+        form.instance.user = user
+        return super().form_valid(form)
