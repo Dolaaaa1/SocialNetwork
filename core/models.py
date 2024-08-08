@@ -12,6 +12,14 @@ class User(AbstractUser):
     def get_num_posts(self):
         return Post.objects.filter(user=self).count()
     
+    def is_following(self , user_B):
+        count = Friends.objects.filter(user_a=self ,user_b=user_B).count()
+        if count > 0 :
+            return True
+        else:
+            return False
+         
+    
     
     
     
@@ -24,4 +32,14 @@ class Post(models.Model):
     
     def __str__(self):
         return self.caption    
+    
+    
+    
+class Friends(models.Model):
+    user_a = models.ForeignKey(User, on_delete= models.CASCADE,related_name='user_a') 
+    user_b = models.ForeignKey(User, on_delete= models.CASCADE,related_name='user_b')  
+    
+    
+    def __str__(self):
+        return self.user_a.username + " --- "+ self.user_b.username
     

@@ -111,6 +111,8 @@ class FriendProfile(ListView):
         friend_username = self.kwargs['username']
         friend = User.objects.get(username = friend_username)
         context['friend'] = friend
+        is_following = self.request.user.is_following(friend) 
+        context['is_following'] = is_following
         return context
     
     def get_queryset(self) :
@@ -131,4 +133,18 @@ class SearchResults(ListView):
         return qs
     
     
+@login_required(login_url='login')    
+def follow_user(request , id):
+    user_A = request.user
+    user_B = User.objects.get(id=id)
+    new_friend = Friends(user_a = user_A ,user_b = user_B)
+    new_friend.save()
+    return redirect('/user/'+user_B.username)
         
+        
+@login_required(login_url='login')    
+def unfollow_user(request , id):
+    user_A = request.user
+    user_B = User.objects.get(id=id)
+    Friends.objects.filter(user_a=user_A ,user_b=user_B).delete()
+    return redirect('/user/'+user_B.username)
