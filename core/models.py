@@ -18,6 +18,14 @@ class User(AbstractUser):
             return True
         else:
             return False
+        
+        
+    def get_followings(self):
+        followings = Friends.objects.filter(user_a =self)
+        temp =[]
+        for item in followings:
+            temp.append(item.user_b.id)
+        return temp        
          
     
     

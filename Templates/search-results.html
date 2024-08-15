@@ -25,9 +25,13 @@ Search
 
                 {% for user in object_list %}
                 <div class="card" style="margin: 1%;">
-                    <div class="card-body">
-                        <img class="img-fluid img-thumbnail" src="{{user.profile_pic.url}}" width="150" height="150">
-                        <a href="/user/{{user.username}}"> <h1>@ {{user.username}} </h1></a>
+                    <div class="card-body row">
+                        <div class="col-md-4">
+                         <img class="img-fluid img-thumbnail" src="{{user.profile_pic.url}}" width="150" height="100">
+                        </div>
+                        <div class="col-med-10">
+                         <a href="/user/{{user.username}}"> <h1>@ {{user.username}} </h1></a>
+                        </div>
                         
                     </div>
                 </div>
@@ -40,19 +44,3 @@ Search
 </div>
 
 {% endblock content %}
-
-<!DOCTYPE html>
-<html>
-<head>
-<title>Page Title</title>
-</head>
-<body>
-
-{% for user in object_list%}
-<a href="/user/{{user.username}}"> <h1> {{user.username}} </h1></a>
-<img src="{{user.profile_pic.url}}"> 
-{% endfor %}
-
-
-</body>
-</html>

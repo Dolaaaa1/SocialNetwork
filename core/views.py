@@ -46,7 +46,7 @@ def login_page(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request,user)
-                return redirect('profile')
+                return redirect('home-page')
             else:
                 print("wrong username or password")
                 return redirect('login')
@@ -71,6 +71,7 @@ class AccountSettingsView(UpdateView):
     model = User
     fields = ['first_name','last_name', 'profile_pic', 'bio']
     template_name = 'account_settings.html'
+    success_url = '/profile/'
     
     
     def get_object(self, queryset = None ) :
@@ -121,7 +122,7 @@ class FriendProfile(ListView):
         return Post.objects.filter(user = friend).order_by('-date_created')    
     
     
-    
+@method_decorator(login_required(login_url='login'),name='dispatch')    
 class SearchResults(ListView):
     model = User
     template_name = 'search-results.html'
@@ -148,3 +149,15 @@ def unfollow_user(request , id):
     user_B = User.objects.get(id=id)
     Friends.objects.filter(user_a=user_A ,user_b=user_B).delete()
     return redirect('/user/'+user_B.username)
+
+
+
+@method_decorator(login_required(login_url='login'),name='dispatch')    
+class HomePage(ListView):
+    model = Post
+    template_name = 'home.html'
+    paginate_by = 5
+    
+    def get_queryset(self):
+        followings = self.request.user.get_followings()
+        return Post.objects.filter(user_id__in=followings).order_by('-date_created')

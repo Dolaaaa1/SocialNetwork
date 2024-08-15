@@ -1,0 +1,42 @@
+{%  extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Home
+{% endblock title %}
+
+
+{% block navbar %}
+
+
+{%  include 'navbar.html' %}
+
+{% endblock navbar %}
+
+{% block content %}
+
+<div class="col-md-8" >
+        <div class="card card-body"style="border-radius:25px; min-height:100%;">
+                {% for post in object_list %}
+                <div class="card" style="margin: 2%;">
+                 <div class="card-body row">
+                    <div class="col-md-4">
+                      <img src="{{post.user.profile_pic.url}} " width="150" height="150">  
+                    </div>
+                    <div class="col-med-10">
+                    <div >
+                        <a href="/user/{{post.user.username}}"><h4>@{{post.user.username}}</h4></a>
+                        <p class="card-text">{{post.caption}}</p>
+                        <a href="#" class="card-link">{{post.date_created}}</a>
+                    </div>
+                    </div>
+                 </div>
+                </div>
+                {% endfor %}
+        </div>
+        <br>
+    </div> 
+
+</div>
+
+{% endblock content %}
